@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Menu,
   ChevronDown,
@@ -14,14 +14,19 @@ import {
   Building,
 } from "lucide-react";
 import logo from "../../img/the-logo.svg";
+import ethereum from "../../img/eth.png";
+import Circle from "../../img/blueCircle.png";
 // import Image from "next/image";
 import UK from "../../img/uk-flag.jpeg";
 import Usdt from "../../img/usdt.png";
 import Pullix from "../../img/pullix-icon.png";
 import Image from "next/image";
 import { ConnectWalletModal } from "../components/Modal";
-
+import ConnectedWallet from "../components/ConnectedWallet";
 import { FaXmark } from "react-icons/fa6";
+import axios from "axios";
+
+import { GoDash } from "react-icons/go";
 
 import { useAccount, useDisconnect, useEnsName } from "wagmi";
 
@@ -29,6 +34,16 @@ export default function StakingPlatform() {
   const [lockPeriod, setLockPeriod] = useState("30 Days");
   const [apyPeriod, setApyPeriod] = useState("30 Days");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [ethBalance, setEthBalance] = useState(0);
+  // const [showDetails, setShowDetails] = useState();
+
+
+  const [isConnectedModalOpen, setIsConnectedModalOpen] = useState(false);
+
+  const openModal = () => {
+    setIsConnectedModalOpen(true);
+  };
+  const closeModal = () => setIsConnectedModalOpen(false);
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
@@ -72,6 +87,31 @@ export default function StakingPlatform() {
   };
   const formattedDate = today.toLocaleDateString("en-US", options);
 
+  useEffect(() => {
+    getTokens();
+  }, [address]);
+
+  const getTokens = async () => {
+    try {
+      const apiKey = "freekey";
+
+      const response = await axios.get(
+        `https://api.ethplorer.io/getAddressInfo/${address}?apiKey=${apiKey}`
+      );
+
+      console.log("addresss", address);
+
+      const tokenData = response.data.tokens || [];
+      const ethData = response.data.ETH || {};
+
+      console.log("tokenData:", tokenData);
+
+      setEthBalance(ethData.balance);
+    } catch (err) {
+      console.error("Error fetching tokens:", err);
+    }
+  };
+
   return (
     <div
       className="min-h-screen overflow-hidden bg-[#0d0e17] pt-12 text-white font-sans"
@@ -102,36 +142,47 @@ export default function StakingPlatform() {
           >
             <Menu />
           </button>
-          <div className="flex items-center space-x-4">
-            <button className=" text-xl font-[500] bg-[#0077b6]  bg-gradient-to-r from-[#0077b6] to-[#3fc5ea]  text-white px-4 py-2 rounded">
+          <div className="flex items-center md:space-x-4 space-x-2">
+            <div>
               {status === "connecting" && isModalOpen === true ? (
-                <p
-                  className="text-base"
+                <button
+                  className="  font-[500] bg-[#0077b6]  bg-gradient-to-r from-[#0077b6] to-[#3fc5ea]  text-white px-4 py-2 rounded text-base"
                   onClick={ConnectWalletButtonClickHandler}
                 >
                   {" "}
                   Connecting . . .{" "}
-                </p>
+                </button>
               ) : status === "connected" ? (
-                <p
-                  className="text-base"
-                  onClick={ConnectWalletButtonClickHandler}
+                <button
+                  className="px-2 py-1 flex hover:bg-[#313138] items-center md:gap-3 gap-1 bg-[#18181b] rounded-full"
+                  onClick={openModal}
                 >
-                  {" "}
-                  {ensName
-                    ? `${ensName} (${formatAddress(address)})`
-                    : formatAddress(address)}{" "}
-                </p>
+                  <div className="flex items-center md:gap-2 gap-1">
+                    <Image src={ethereum} alt="eth" width={20} height={25} />
+                    <p className="text-white md:text-md text-[12px]">
+                      {ethBalance.toFixed(4) || 0.0} ETH
+                    </p>
+                  </div>
+                  <div className="p-1 bg-[#252528] flex items-center md:gap-2 gap-1 rounded-full">
+                    <Image src={Circle} alt="eth" width={20} height={25} />
+                    <p className="text-white md:text-md text-[12px]">
+                      {ensName
+                        ? `${ensName} (${formatAddress(address)})`
+                        : formatAddress(address)}
+                    </p>
+                  </div>{" "}
+                </button>
               ) : (
-                <p
-                  className="text-base"
+                <button
+                  className="  font-[500] bg-[#0077b6]  bg-gradient-to-r from-[#0077b6] to-[#3fc5ea]  text-white px-4 py-2 rounded text-base"
                   onClick={ConnectWalletButtonClickHandler}
                 >
                   {" "}
                   Connect Wallet{" "}
-                </p>
+                </button>
               )}
-            </button>
+            </div>
+            <GoDash className="rotate-90 text-white text-2xl" />
 
             <div className="flex items-center">
               <Image
@@ -246,6 +297,14 @@ export default function StakingPlatform() {
         isModalOpen={isModalOpen}
         changeModalState={changeModalState}
       />
+      <ConnectedWallet
+        isOpen={isConnectedModalOpen}
+        onClose={closeModal}
+        address={address}
+        ethBalance={ethBalance}
+        ensName={ensName}
+        disconnect={disconnect}
+      />
     </div>
   );
 }
@@ -329,7 +388,7 @@ function StatsCard({ title, value, icon, period, setPeriod }: any) {
 function StakeForm() {
   return (
     <div className="bg-[#161a28] flex gap-6 rounded-lg p-6">
-      <div className="w-[65%]">
+      <div className="w-[60%]">
         <h2 className="text-[#ffa500] border-b border-white pb-4">
           Amount to Stake
         </h2>
@@ -340,24 +399,24 @@ function StakeForm() {
             className="w-full bg-transparent border border-white text-white rounded p-6 mb-4"
           />
           <div className="grid grid-cols-2 gap-4">
-            <button className="bg-gradient-to-r from-[#c96d00] via-[#d7913f] to-[#ef9933] hover:from-[#ef9933] hover:to-[#c96d00] transition-colors duration-[350ms] ease-out hover:bg-gradient-to-r hover:via-[#3fc5ea]/60cursor-pointer w-full text-white rounded py-4">
+            <button className="bg-gradient-to-r from-[#c96d00] via-[#d7913f] to-[#ef9933] hover:from-[#ef9933] hover:to-[#c96d00] transition-colors duration-[350ms] ease-out hover:bg-gradient-to-r hover:via-[#3fc5ea]/60cursor-pointer w-full text-white rounded py-2">
               Stake
             </button>
-            <button className="bg-[#025e9f] bg-gradient-to-r from-[#025e9f] to-[#3fc5ea] hover:from-[#3fc5ea] hover:to-[#025e9f] transition-colors duration-[350ms] ease-out w-full text-white rounded py-4">
+            <button className="bg-[#025e9f] bg-gradient-to-r from-[#025e9f] to-[#3fc5ea] hover:from-[#3fc5ea] hover:to-[#025e9f] transition-colors duration-[350ms] ease-out w-full text-white rounded py-2">
               Unstake
             </button>
           </div>
         </div>
       </div>
-      <div className="w-[35%]">
+      <div className="w-[40%]">
         <h2 className="text-[#ffa500] border-b border-white pb-4">Timeframe</h2>
-        <select className="w-full bg-transparent mt-4 border border-[#ffa500] text-white rounded p-[26px] mb-4">
+        <select className="w-full bg-transparent text-sm mt-4 border border-[#ffa500] text-white rounded p-[26px] mb-4">
           <option>Select Lock Period</option>
           <option>30 days</option>
           <option>90 days</option>
           <option>180 days</option>
         </select>
-        <button className="bg-gradient-to-r from-[#c96d00] via-[#d7913f] to-[#ef9933] hover:from-[#ef9933] hover:to-[#c96d00] transition-colors duration-[350ms] ease-out hover:bg-gradient-to-r hover:via-[#3fc5ea]/60cursor-pointer grid grid-cols-1 w-full text-white rounded py-4">
+        <button className="bg-gradient-to-r from-[#c96d00] via-[#d7913f] to-[#ef9933] hover:from-[#ef9933] hover:to-[#c96d00] transition-colors duration-[350ms] ease-out hover:bg-gradient-to-r hover:via-[#3fc5ea]/60cursor-pointer grid grid-cols-1 w-full text-white rounded py-2">
           Get Rewards
         </button>
       </div>
