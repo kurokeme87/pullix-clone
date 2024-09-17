@@ -3,9 +3,9 @@ import localFont from "next/font/local";
 import "./globals.css";
 // import { WagmiProvider } from "wagmi";
 // import { Web3Modal } from "@web3modal/react";
-import { config } from "../config";
+// import { config } from "../config";
 // import { chains, providers } from "@web3modal/ethereum";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+// import { QueryClient } from "@tanstack/react-query";
 import { WagmiContextProvider } from "../providers/wagmi";
 
 const geistSans = localFont({
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
 //   projectId: "",
 // };
 
-const queryClient = new QueryClient();
+// const queryClient = new QueryClient();
 
 export default function RootLayout({
   children,

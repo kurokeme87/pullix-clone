@@ -8,9 +8,6 @@ export const EthereumSVG = () => {
       height="100%"
       x={0}
       y={0}
-      style={{
-        enableBackground: "new 0 0 318.6 318.6",
-      }}
       viewBox="0 0 318.6 318.6"
     >
       <style>

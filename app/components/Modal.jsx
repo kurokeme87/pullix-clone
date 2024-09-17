@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAccount, useConnect } from "wagmi";
+import { useConnect } from "wagmi";
 import Image from "next/image";
 
 import {
@@ -10,7 +10,6 @@ import {
   Flex,
   Box,
   SimpleGrid,
-  useSteps,
   useMediaQuery,
 } from "@chakra-ui/react";
 import Logo from "../../img/pullix-icon.png";
@@ -31,17 +30,19 @@ import { openloginAdapter, web3AuthOptions } from "../../providers/web3Auth";
 import React from "react";
 // import Image from "next/image";
 
-const walletOrdering = {
-  metaMaskSDK: 1,
-  coinbaseWalletSDK: 2,
-  walletConnect: 3,
-  trustWallet: 4,
-  injected: 99,
-};
+// const walletOrdering = {
+//   metaMaskSDK: 1,
+//   coinbaseWalletSDK: 2,
+//   walletConnect: 3,
+//   trustWallet: 4,
+//   injected: 99,
+// };
 
 export const ConnectWalletModal = ({ isModalOpen, changeModalState }) => {
   const [web3auth, setWeb3auth] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
+
+  console.log(loggedIn);
 
   // Torus Wallet
   useEffect(() => {
@@ -72,7 +73,7 @@ export const ConnectWalletModal = ({ isModalOpen, changeModalState }) => {
     await web3auth.connect();
   };
 
-  const { connectors, connect, status } = useConnect();
+  const { connectors, connect } = useConnect();
 
   console.log("[Connectors!]: ", connectors);
 

@@ -21,7 +21,7 @@ import Pullix from "../../img/pullix-icon.png";
 import Image from "next/image";
 import { ConnectWalletModal } from "../components/Modal";
 
-import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from "wagmi";
+import { useAccount, useDisconnect, useEnsName } from "wagmi";
 
 export default function StakingPlatform() {
   const [lockPeriod, setLockPeriod] = useState("30 Days");
@@ -62,7 +62,7 @@ export default function StakingPlatform() {
   }
 
   const today = new Date();
-  const options = {
+  const options: Intl.DateTimeFormatOptions = {
     weekday: "long",
     year: "numeric",
     month: "long",
