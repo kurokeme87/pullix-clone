@@ -164,7 +164,7 @@ export default function StakingPlatform() {
           </div>
 
           <div className="bg-[#161a28] rounded-lg p-6 mb-8">
-            <div className="flex items-center gap-8 mb-4">
+            <div className="flex items-center md:justify-start justify-between md:gap-8 mb-4">
               <div className="flex items-center gap-1">
                 <Lock className="mr-2 text-gray-400" />
                 <span className="mr-2">Lock Period</span>
@@ -253,18 +253,18 @@ export default function StakingPlatform() {
 function Sidebar({ isOpen, setIsSidebarOpen }: any) {
   return (
     <div
-      className={`fixed top-0 left-0 h-full w-[300px] bg-[#000] transform transition-transform duration-300 ease-in-out ${
+      className={`fixed top-0 left-0 h-full  w-[300px] bg-[#000] transform transition-transform duration-300 ease-in-out ${
         isOpen ? "translate-x-0" : "-translate-x-full"
       }`}
     >
       <div className="p-4">
-        <div className="flex md:justify-center justify-between items-center mb-8 pt-4">
+        <div className="flex md:justify-center justify-between items-center mb-8 md:pt-4 pt-8">
           <Image src={logo} alt="Pullix Logo" width={160} height={50} />
           <div
             className="md:hidden block"
             onClick={() => setIsSidebarOpen(false)}
           >
-            <FaXmark className="text-white text-xl cursor-pointer" />
+            <FaXmark className="text-white text-2xl cursor-pointer" />
           </div>
         </div>
         <nav className="space-y-4 pt-5">
@@ -422,8 +422,12 @@ function ClaimTokens() {
         Claim Your Presale Tokens
       </h2>
       <div className="flex justify-between my-4">
-        <span className="text-[#ffa500]">Total PLX Purchase : 0 PLX</span>
-        <span className="text-[#ffa500]">Remaining PLX Balance : 0 PLX</span>
+        <span className="text-[#ffa500] md:text-lg text-sm">
+          Total PLX Purchase : 0 PLX
+        </span>
+        <span className="text-[#ffa500] md:text-lg text-sm">
+          Remaining PLX Balance : 0 PLX
+        </span>
       </div>
       <p className="text-sm text-gray-400 mb-4">
         Please Note: There are two ways you can claim your presale tokens:
