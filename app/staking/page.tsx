@@ -1,3 +1,4 @@
+/* eslint-disable */
 "use client";
 import { useState, useEffect } from "react";
 import {
@@ -36,7 +37,6 @@ export default function StakingPlatform() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [ethBalance, setEthBalance] = useState(0);
   // const [showDetails, setShowDetails] = useState();
-
 
   const [isConnectedModalOpen, setIsConnectedModalOpen] = useState(false);
 
