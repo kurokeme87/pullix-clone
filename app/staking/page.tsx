@@ -21,6 +21,8 @@ import Pullix from "../../img/pullix-icon.png";
 import Image from "next/image";
 import { ConnectWalletModal } from "../components/Modal";
 
+import { FaXmark } from "react-icons/fa6";
+
 import { useAccount, useDisconnect, useEnsName } from "wagmi";
 
 export default function StakingPlatform() {
@@ -72,7 +74,7 @@ export default function StakingPlatform() {
 
   return (
     <div
-      className="min-h-screen bg-[#0d0e17] pt-12 text-white font-sans"
+      className="min-h-screen overflow-hidden bg-[#0d0e17] pt-12 text-white font-sans"
       style={{
         backgroundImage: "url('/img/pullixBg.png')",
         backgroundRepeat: "no-repeat",
@@ -85,13 +87,15 @@ export default function StakingPlatform() {
         backgroundAttachment: "fixed",
       }}
     >
-      <Sidebar isOpen={isSidebarOpen} />
+      <Sidebar isOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
       <div
-        className={`transition-all duration-300 ease-in-out  ${
-          isSidebarOpen ? "ml-[300px] px-[30px]" : "ml-0 px-[140px]"
+        className={`transition-all overflow-hidden duration-300 ease-in-out  ${
+          isSidebarOpen
+            ? "md:ml-[300px] md:px-[30px]"
+            : "ml-0 md:px-[140px] px-[20px]"
         }`}
       >
-        <header className="flex justify-between items-center p-4">
+        <header className="flex justify-between w-full items-center p-4">
           <button
             onClick={toggleSidebar}
             className="text-gray-400 focus:outline-none"
@@ -142,7 +146,7 @@ export default function StakingPlatform() {
           </div>
         </header>
 
-        <main className="container mx-auto  py-8">
+        <main className="container mx-auto w-full  py-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <StatsCard
               title="Total Value Locked"
@@ -180,20 +184,29 @@ export default function StakingPlatform() {
                 <p className="text-gray-400 text-left  font-semibold text-[12px] mb-5">
                   {formattedDate}
                 </p>
-                <span className="text-[#ffa500] text-4xl bg-[#1e2237] font-bold p-2">
+                <span className="text-[#ffa500] md:text-4xl text-2xl bg-[#1e2237] font-bold p-2">
                   00
                 </span>
-                <span className="text-[#ffa500] text-4xl font-bold"> : </span>
-                <span className="text-[#ffa500] text-4xl bg-[#1e2237] font-bold p-2">
+                <span className="text-[#ffa500] md:text-4xl text-2xl font-bold">
+                  {" "}
+                  :{" "}
+                </span>
+                <span className="text-[#ffa500] md:text-4xl text-2xl bg-[#1e2237] font-bold p-2">
                   00
                 </span>
-                <span className="text-[#ffa500] text-4xl font-bold"> : </span>
-                <span className="text-[#ffa500] text-4xl bg-[#1e2237] font-bold p-2">
+                <span className="text-[#ffa500] md:text-4xl text-2xl font-bold">
+                  {" "}
+                  :{" "}
+                </span>
+                <span className="text-[#ffa500] md:text-4xl text-2xl bg-[#1e2237] font-bold p-2">
                   {" "}
                   00
                 </span>
-                <span className="text-[#ffa500] text-4xl font-bold"> : </span>
-                <span className="text-[#ffa500] text-4xl bg-[#1e2237] font-bold p-2">
+                <span className="text-[#ffa500] md:text-4xl text-2xl font-bold">
+                  {" "}
+                  :{" "}
+                </span>
+                <span className="text-[#ffa500] md:text-4xl text-2xl bg-[#1e2237] font-bold p-2">
                   00{" "}
                 </span>
               </div>
@@ -209,7 +222,7 @@ export default function StakingPlatform() {
                 </p>
               </div>
             </div>
-            <div className="flex justify-end ">
+            <div className="flex justify-end md:mt-0 mt-4 ">
               <Image src={logo} alt="Pullix Logo" width={80} height={20} />
             </div>
           </div>
@@ -237,7 +250,7 @@ export default function StakingPlatform() {
   );
 }
 
-function Sidebar({ isOpen }: any) {
+function Sidebar({ isOpen, setIsSidebarOpen }: any) {
   return (
     <div
       className={`fixed top-0 left-0 h-full w-[300px] bg-[#000] transform transition-transform duration-300 ease-in-out ${
@@ -245,8 +258,14 @@ function Sidebar({ isOpen }: any) {
       }`}
     >
       <div className="p-4">
-        <div className="flex justify-center mb-8 pt-4">
+        <div className="flex md:justify-center justify-between items-center mb-8 pt-4">
           <Image src={logo} alt="Pullix Logo" width={160} height={50} />
+          <div
+            className="md:hidden block"
+            onClick={() => setIsSidebarOpen(false)}
+          >
+            <FaXmark className="text-white text-xl cursor-pointer" />
+          </div>
         </div>
         <nav className="space-y-4 pt-5">
           <SidebarItem icon={<Home />} text="Home" active />

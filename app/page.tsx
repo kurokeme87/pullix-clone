@@ -74,7 +74,7 @@ export default function Home() {
         <div className="flex justify-center mb-8 pt-14">
           <Image src={logo} alt="Pullix Logo" width={160} height={50} />
         </div>
-        <div className="absolute left-0 z-[0]">
+        <div className="absolute md:block hidden left-0 z-[0]">
           <Image
             src={"https://pullix.io/assets/background.svg"}
             alt="Pullix Logo"
@@ -121,14 +121,14 @@ export default function Home() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex justify-center gap-4 mb-16 mt-5  cursor-pointer  mx-[305px]">
-          <button className=" text-center w-[35%] bg-[#025e9f] bg-gradient-to-r from-[#025e9f] to-[#3fc5ea] hover:from-[#3fc5ea] hover:to-[#025e9f] transition-colors duration-[350ms] ease-out cursor-pointer flex-grow-[1] text-white px-16 py-5 z-[10] rounded-md text-lg font-semibold">
+        <div className="flex justify-center gap-4 mb-16 mt-5  cursor-pointer  md:mx-[305px]">
+          <button className=" text-center md:w-[35%]  bg-[#025e9f] bg-gradient-to-r from-[#025e9f] to-[#3fc5ea] hover:from-[#3fc5ea] hover:to-[#025e9f] transition-colors duration-[350ms] ease-out cursor-pointer flex-grow-[1] text-white px-16 py-5 z-[10] rounded-md text-lg font-semibold">
             <Link href="/staking" className="w-full h-full " target="_blank">
               Stake
             </Link>
           </button>
 
-          <button className="text-center  w-[35%] bg-gradient-to-r from-[#c96d00] via-[#d7913f] to-[#ef9933] hover:from-[#ef9933] hover:to-[#c96d00] transition-colors duration-[350ms] ease-out hover:bg-gradient-to-r hover:via-[#3fc5ea]/60cursor-pointer flex-grow-[1] text-white px-16 py-5 z-[10] rounded-md text-lg font-semibold">
+          <button className="text-center  md:w-[35%]  bg-gradient-to-r from-[#c96d00] via-[#d7913f] to-[#ef9933] hover:from-[#ef9933] hover:to-[#c96d00] transition-colors duration-[350ms] ease-out hover:bg-gradient-to-r hover:via-[#3fc5ea]/60cursor-pointer flex-grow-[1] text-white px-16 py-5 z-[10] rounded-md text-lg font-semibold">
             <Link href="/staking" className="w-full h-full " target="_blank">
               Claim
             </Link>
@@ -145,7 +145,7 @@ export default function Home() {
 
         {/* FAQ Section */}
         <div className="mb-16">
-          <h2 className="text-6xl font-bold text-center mb-8">
+          <h2 className="md:text-6xl text-3xl font-bold text-center mb-8">
             Frequently Asked Question
           </h2>
           <div className="space-y-4 max-w-5xl pt-8 mx-auto">
@@ -156,13 +156,13 @@ export default function Home() {
                 className="border border-gray-700 bg-gradient-to-br from-[#CE7914] via-[#CE7914]/0 to-[#E2A965] rounded-3xl w-full cursor-pointer p-[1px] transition-all"
               >
                 <div
-                  className={`bg-black w-full h-full py-5 px-5 md:px-8 rounded-3xl duration-200 ease-in-out ${
+                  className={`bg-black w-full h-full py-5 pb-4 px-5 md:px-8 rounded-3xl duration-200 ease-in-out ${
                     openIndex === index ? "max-h-96" : "max-h-20"
                   }`}
                 >
                   <div className="grid grid-cols-[1fr_auto] items-center ">
                     <p
-                      className={`${poppins.className} text-xl font-[900] text-white t_base  font-poppins`}
+                      className={`${poppins.className} md:text-xl text-sm font-[900] text-white t_base  font-poppins`}
                     >
                       {faq.question}
                     </p>
@@ -177,7 +177,7 @@ export default function Home() {
                   {/* Conditionally render the answer */}
                   {openIndex === index && (
                     <p
-                      className={`${poppins.className} font-[500] text-xl pt-10 text-white `}
+                      className={`${poppins.className} font-[500] md:text-xl text-sm pt-10 text-white `}
                     >
                       {faq.answer}
                     </p>
@@ -195,16 +195,16 @@ export default function Home() {
           <div>
             <p className="mt-10 font-[700]">Socials</p>
             <div className="flex items-center gap-10 mt-6">
-              <a href="">
+              <a href="https://x.com/pullixmarkets">
                 <FaTwitter className="text-white text-4xl " />
               </a>
-              <a href="">
+              <a href="https://t.me/pullixmarkets">
                 <FaTelegram className="text-white text-4xl " />
               </a>
-              <a href="">
+              <a href="https://discord.com/invite/zcbBhphBsd">
                 <FaDiscord className="text-white text-4xl " />
               </a>
-              <a href="">
+              <a href="https://www.instagram.com/accounts/login/?next=https%3A%2F%2Fwww.instagram.com%2Fpullixmarkets%2F&is_from_rle">
                 <FaInstagram className="text-white text-4xl " />
               </a>
             </div>
