@@ -91,7 +91,7 @@ export default function StakingPlatform() {
       <div
         className={`transition-all overflow-hidden duration-300 ease-in-out  ${
           isSidebarOpen
-            ? "md:ml-[300px] md:px-[30px]"
+            ? "md:ml-[300px] md:px-[30px] px-[20px]"
             : "ml-0 md:px-[140px] px-[20px]"
         }`}
       >
