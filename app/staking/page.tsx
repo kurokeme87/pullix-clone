@@ -202,28 +202,34 @@ export default function StakingPlatform() {
             <StatsCard
               title="Total Value Locked"
               value="$2,334,021.49"
-              icon={<Lock />}
+              icon={<Lock size={11} />}
             />
             <StatsCard
               title="APY Rate"
               value="10%"
-              icon={<Flame />}
+              icon={<Flame size={11} />}
               period={apyPeriod}
               setPeriod={setApyPeriod}
             />
-            <StatsCard title="Stakers" value="1,011" icon={<Users />} />
+            <StatsCard
+              title="Stakers"
+              value="1,011"
+              icon={<Users size={11} />}
+            />
           </div>
 
           <div className="bg-[#161a28] rounded-lg p-6 mb-8">
-            <div className="flex items-center md:justify-start justify-between md:gap-8 mb-4">
-              <div className="flex items-center gap-1">
-                <Lock className="mr-2 text-gray-400" />
-                <span className="mr-2">Lock Period</span>
+            <div className="flex items-center md:justify-start justify-between md:gap-2 mb-4">
+              <div className="flex items-center gap-3">
+                <Lock size={11} className=" text-[10px] text-gray-400" />
+
+                <span className="text-[11px]  text-gray-400">Lock Period</span>
               </div>
+              <GoDash className="rotate-90 md:block hidden text-white text-2xl" />
               <select
                 value={lockPeriod}
                 onChange={(e) => setLockPeriod(e.target.value)}
-                className="bg-transparent border border-[#fff] text-gray-400 rounded p-[10px]"
+                className="bg-transparent border border-[#fff] text-[11px] text-[#605f5f] rounded py-[9px] px-[10px] "
               >
                 <option>30 Days</option>
                 <option>60 Days</option>
@@ -232,7 +238,7 @@ export default function StakingPlatform() {
             </div>
             <div className="flex flex-col items-center justify-center mb-4">
               <div className="text-5xl font-bold text-center mb-4">
-                <p className="text-gray-400 text-left  font-semibold text-[12px] mb-5">
+                <p className="text-gray-400 text-left  font-semibold text-[11px] mb-5">
                   {formattedDate}
                 </p>
                 <span className="text-[#ffa500] md:text-4xl text-2xl bg-[#1e2237] font-bold p-2">
@@ -264,17 +270,18 @@ export default function StakingPlatform() {
             </div>
             <div className="flex justify-center items-center text-sm border-t pt-4  border-white text-gray-400">
               <div className="flex items-center gap-10">
-                <p>
-                  Token Staked: <span className="text-white">0 PLX</span>{" "}
+                <p className=" text-[11px]">
+                  Token Staked:{" "}
+                  <span className="text-white text-[12px]">0 PLX</span>{" "}
                 </p>
-                <p>
+                <p className=" text-[11px]">
                   Rewards Earned:{" "}
-                  <span className="text-white">0.00000 PLX</span>{" "}
+                  <span className="text-white text-[12px]">0.00000 PLX</span>{" "}
                 </p>
               </div>
             </div>
             <div className="flex justify-end md:mt-0 mt-4 ">
-              <Image src={logo} alt="Pullix Logo" width={80} height={20} />
+              <Image src={logo} alt="Pullix Logo" width={50} height={15} />
             </div>
           </div>
 
@@ -360,13 +367,13 @@ function StatsCard({ title, value, icon, period, setPeriod }: any) {
   return (
     <div className="bg-[#161a28] rounded-lg p-6">
       <div className="flex border-b border-white justify-between items-center pb-4">
-        <h2 className="text-[#ffa500]">{title}</h2>
-        <div className="text-[#ffa500] text-sm">{icon}</div>
+        <h2 className="text-[#ffa500] text-[11px]">{title}</h2>
+        <div className="text-[#ffa500] text-[11px]">{icon}</div>
       </div>
 
       {setPeriod ? (
         <div className="p-3 bg-[#2c2d3a] mt-4 flex items-center justify-between">
-          <div className="text-xl font-light ">{value}</div>
+          <div className="text-[15px] font-light ">{value}</div>
 
           <select
             value={period}
@@ -379,7 +386,9 @@ function StatsCard({ title, value, icon, period, setPeriod }: any) {
           </select>
         </div>
       ) : (
-        <div className="text-xl font-light  p-3 bg-[#2c2d3a] mt-4">{value}</div>
+        <div className="text-[15px] font-light  p-3 bg-[#2c2d3a] mt-4">
+          {value}
+        </div>
       )}
     </div>
   );
@@ -388,15 +397,15 @@ function StatsCard({ title, value, icon, period, setPeriod }: any) {
 function StakeForm() {
   return (
     <div className="bg-[#161a28] flex gap-6 rounded-lg p-6">
-      <div className="w-[60%]">
-        <h2 className="text-[#ffa500] border-b border-white pb-4">
+      <div className="w-[65%]">
+        <h2 className="text-[#ffa500] text-[11px] border-b border-white pb-4">
           Amount to Stake
         </h2>
         <div className="mt-4">
           <input
             type="text"
             placeholder="Amount"
-            className="w-full bg-transparent border border-white text-white rounded p-6 mb-4"
+            className="w-full bg-transparent text-[11px] border border-white text-white rounded px-6 py-4 mb-4"
           />
           <div className="grid grid-cols-2 gap-4">
             <button className="bg-gradient-to-r from-[#c96d00] via-[#d7913f] to-[#ef9933] hover:from-[#ef9933] hover:to-[#c96d00] transition-colors duration-[350ms] ease-out hover:bg-gradient-to-r hover:via-[#3fc5ea]/60cursor-pointer w-full text-white rounded py-2">
@@ -409,8 +418,10 @@ function StakeForm() {
         </div>
       </div>
       <div className="w-[40%]">
-        <h2 className="text-[#ffa500] border-b border-white pb-4">Timeframe</h2>
-        <select className="w-full bg-transparent text-sm mt-4 border border-[#ffa500] text-white rounded p-[26px] mb-4">
+        <h2 className="text-[#ffa500] border-b border-white pb-4 text-[11px]">
+          Timeframe
+        </h2>
+        <select className="w-full bg-transparent text-[11px] mt-4 border border-[#ffa500] text-white rounded px-[26px] py-[17px] mb-4">
           <option>Select Lock Period</option>
           <option>30 days</option>
           <option>90 days</option>
@@ -427,7 +438,9 @@ function StakeForm() {
 function TokenRates() {
   return (
     <div className="bg-[#161a28] rounded-lg p-6">
-      <h2 className="text-[#ffa500] border-b border-white pb-4">Token Rate</h2>
+      <h2 className="text-[#ffa500] border-b text-[11px] border-white pb-4">
+        Token Rate
+      </h2>
       <div className="space-y-4 mt-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center w-full gap-8 bg-[#2c2d3a] ">
@@ -436,16 +449,18 @@ function TokenRates() {
                 src={Usdt}
                 alt="USDT"
                 className=""
-                width={34}
-                height={34}
+                width={23}
+                height={23}
               />
             </div>
             <div className="bg-[#2c2d3a]">
               <div className="flex items-center gap-1">
-                <div className="text-md">USDT | </div>
-                <div className="text-xs text-gray-400"> Tether USD</div>
+                <div className="text-[11px]">USDT | </div>
+                <div className="text-[11px] text-gray-400"> Tether USD</div>
               </div>
-              <div className="text-[#ffa500] font-semibold">$ 1.00 USD</div>
+              <div className="text-[#ffa500] text-sm font-semibold">
+                $ 1.00 USD
+              </div>
             </div>
           </div>
         </div>
@@ -456,16 +471,18 @@ function TokenRates() {
                 src={Pullix}
                 alt="PLX"
                 className=""
-                width={34}
-                height={34}
+                width={23}
+                height={23}
               />
             </div>
             <div className="">
               <div className="flex items-center gap-1">
-                <div className="text-md">PLX | </div>
-                <div className="text-xs text-gray-400"> Pullix</div>
+                <div className="text-[11px]">PLX | </div>
+                <div className="text-[11px] text-gray-400"> Pullix</div>
               </div>
-              <div className="text-[#ffa500] font-semibold">$ 0.047 USD</div>
+              <div className="text-[#ffa500] text-sm font-semibold">
+                $ 0.047 USD
+              </div>
             </div>
           </div>
         </div>
@@ -477,29 +494,35 @@ function TokenRates() {
 function ClaimTokens() {
   return (
     <div className="bg-[#161a28] rounded-lg p-6">
-      <h2 className="text-[#ffa500] text-sm pb-4 border-b border-white">
+      <h2 className="text-[#ffa500] text-[11px] pb-4 border-b border-white">
         Claim Your Presale Tokens
       </h2>
       <div className="flex justify-between my-4">
-        <span className="text-[#ffa500] md:text-lg text-sm">
+        <span className="text-[#ffa500] md:text-[14px] text-sm">
           Total PLX Purchase : 0 PLX
         </span>
-        <span className="text-[#ffa500] md:text-lg text-sm">
+        <span className="text-[#ffa500] md:text-[14px] text-sm">
           Remaining PLX Balance : 0 PLX
         </span>
       </div>
-      <p className="text-sm text-gray-400 mb-4">
-        Please Note: There are two ways you can claim your presale tokens:
+      <p className="text-[10px] text-white mb-1">
+        <span className="font-semibold">Please Note:</span> There are two ways
+        you can claim your presale tokens:
       </p>
-      <ul className="list-disc list-inside text-sm text-gray-400 mb-4">
-        <li>Stake: All of your token balance will be staked for 180 days</li>
-        <li>Claim: You will receive your balances in 4 installments.</li>
-      </ul>
-      <p className="text-sm text-gray-400 mb-4">
-        Claiming Schedule: User can start claiming their presale token as per
-        following schedule:
+      <p className="text-[10px] text-white mb-1">
+        <span className="font-semibold">Stake:</span> All of your token balance
+        will be staked for 180 days
       </p>
-      <ul className="list-disc list-inside text-sm text-gray-400 mb-4">
+      <p className="text-[10px] text-white mb-1">
+        <span className="font-semibold">Claim:</span> You will receive your
+        balances in 4 installments.
+      </p>
+
+      <p className="text-[10px] text-white mb-2">
+        <span className="font-semibold">Claiming Schedule:</span> User can start
+        claiming their presale token as per following schedule:
+      </p>
+      <ul className="list-disc ml-5 list-inside text-[10px] text-white mb-4">
         <li>First Claim of 25% starts from March 28, 2024</li>
         <li>Second Claim of 25% starts from April 28, 2024</li>
         <li>Third Claim of 25% starts from May 28, 2024</li>
