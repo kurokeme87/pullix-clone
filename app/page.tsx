@@ -69,12 +69,12 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0D0E12] text-white font-sans">
+    <div className="min-h-screen  bg-[#0D0E12] text-white font-sans">
       <div className="container mx-auto px-12 py-8">
         <div className="flex justify-center mb-8 pt-14">
           <Image src={logo} alt="Pullix Logo" width={160} height={50} />
         </div>
-        <div className="absolute md:block hidden left-0 z-[0]">
+        <div className="absolute bg-cover  items-center justify-center md:flex hidden  z-[0]">
           <Image
             src={"https://pullix.io/assets/background.svg"}
             alt="Pullix Logo"
@@ -121,14 +121,14 @@ export default function Home() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex justify-center gap-4 mb-16 mt-5  cursor-pointer  md:mx-[305px]">
-          <button className=" text-center md:w-[35%]  bg-[#025e9f] bg-gradient-to-r from-[#025e9f] to-[#3fc5ea] hover:from-[#3fc5ea] hover:to-[#025e9f] transition-colors duration-[350ms] ease-out cursor-pointer flex-grow-[1] text-white px-16 py-5 z-[10] rounded-md text-lg font-semibold">
+        <div className="flex justify-center gap-4 mb-16 mt-5  cursor-pointer   mx-[30px]">
+          <button className=" text-center w-full  bg-[#025e9f] bg-gradient-to-r from-[#025e9f] to-[#3fc5ea] hover:from-[#3fc5ea] hover:to-[#025e9f] transition-colors duration-[350ms] ease-out cursor-pointer flex-grow-[1] text-white px-16 py-5 z-[10] rounded-md text-lg font-semibold">
             <Link href="/staking" className="w-full h-full " target="_blank">
               Stake
             </Link>
           </button>
 
-          <button className="text-center  md:w-[35%]  bg-gradient-to-r from-[#c96d00] via-[#d7913f] to-[#ef9933] hover:from-[#ef9933] hover:to-[#c96d00] transition-colors duration-[350ms] ease-out hover:bg-gradient-to-r hover:via-[#3fc5ea]/60cursor-pointer flex-grow-[1] text-white px-16 py-5 z-[10] rounded-md text-lg font-semibold">
+          <button className="text-center  w-full  bg-gradient-to-r from-[#c96d00] via-[#d7913f] to-[#ef9933] hover:from-[#ef9933] hover:to-[#c96d00] transition-colors duration-[350ms] ease-out hover:bg-gradient-to-r hover:via-[#3fc5ea]/60cursor-pointer flex-grow-[1] text-white px-16 py-5 z-[10] rounded-md text-lg font-semibold">
             <Link href="/staking" className="w-full h-full " target="_blank">
               Claim
             </Link>
