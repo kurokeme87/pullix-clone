@@ -9,6 +9,7 @@ import {
   FaDiscord,
   FaInstagram,
 } from "react-icons/fa";
+// import { useRouter } from "next/router";
 import logo from "../img/the-logo.svg";
 import trading from "../img/trading-platform-preview.png";
 import { Poppins } from "@next/font/google";
@@ -21,6 +22,12 @@ const poppins = Poppins({
 
 export default function Home() {
   const [openIndex, setOpenIndex] = useState(null);
+
+  // const router = useRouter();
+
+  // const handleNavigation = () => {
+  //   router.push("/staking");
+  // };
 
   const faqs = [
     {
@@ -122,17 +129,17 @@ export default function Home() {
 
         {/* Action Buttons */}
         <div className="flex justify-center gap-4 mb-16 mt-5  cursor-pointer   mx-[30px]">
-          <button className=" text-center w-full  bg-[#025e9f] bg-gradient-to-r from-[#025e9f] to-[#3fc5ea] hover:from-[#3fc5ea] hover:to-[#025e9f] transition-colors duration-[350ms] ease-out cursor-pointer flex-grow-[1] text-white px-16 py-5 z-[10] rounded-md text-lg font-semibold">
-            <Link href="/staking" className="w-full h-full " target="_blank">
+          <a className="w-full z-[10] cursor-pointer" href="/staking">
+            <button className=" text-center w-full  bg-[#025e9f] bg-gradient-to-r from-[#025e9f] to-[#3fc5ea] hover:from-[#3fc5ea] hover:to-[#025e9f] transition-colors duration-[350ms] ease-out cursor-pointer flex-grow-[1] text-white px-16 py-5 z-[10] rounded-md text-lg font-semibold">
               Stake
-            </Link>
-          </button>
+            </button>
+          </a>
 
-          <button className="text-center  w-full  bg-gradient-to-r from-[#c96d00] via-[#d7913f] to-[#ef9933] hover:from-[#ef9933] hover:to-[#c96d00] transition-colors duration-[350ms] ease-out hover:bg-gradient-to-r hover:via-[#3fc5ea]/60cursor-pointer flex-grow-[1] text-white px-16 py-5 z-[10] rounded-md text-lg font-semibold">
-            <Link href="/staking" className="w-full h-full " target="_blank">
+          <a className="w-full z-[10] cursor-pointer" href="/staking">
+            <button className="text-center  w-full  bg-gradient-to-r from-[#c96d00] via-[#d7913f] to-[#ef9933] hover:from-[#ef9933] hover:to-[#c96d00] transition-colors duration-[350ms] ease-out hover:bg-gradient-to-r hover:via-[#3fc5ea]/60cursor-pointer flex-grow-[1] text-white px-16 py-5 z-[10] rounded-md text-lg font-semibold">
               Claim
-            </Link>
-          </button>
+            </button>
+          </a>
         </div>
 
         {/* Description */}
