@@ -15,7 +15,7 @@ import {
   Building,
 } from "lucide-react";
 import logo from "../../img/the-logo.svg";
-import ethereum from "../../img/eth.png";
+import ethereumImg from "../../img/eth.png";
 import Circle from "../../img/blueCircle.png";
 // import Image from "next/image";
 import UK from "../../img/uk-flag.jpeg";
@@ -154,11 +154,11 @@ export default function StakingPlatform() {
                 </button>
               ) : status === "connected" ? (
                 <button
-                  className="px-2 py-1 flex hover:bg-[#313138] items-center md:gap-3 gap-1 bg-[#18181b] rounded-full"
+                  className="px-1 py-[2px] flex hover:bg-[#313138] items-center md:gap-3 gap-1 bg-[#18181b] rounded-full"
                   onClick={openModal}
                 >
                   <div className="flex items-center md:gap-2 gap-1">
-                    <Image src={ethereum} alt="eth" width={20} height={25} />
+                    <Image src={ethereumImg} alt="eth" width={32} height={32} />
                     <p className="text-white md:text-md text-[12px]">
                       {ethBalance.toFixed(4) || 0.0} ETH
                     </p>
@@ -189,8 +189,8 @@ export default function StakingPlatform() {
                 src={UK}
                 alt="Flag"
                 className="mr-2"
-                width={50}
-                height={20}
+                width={45}
+                height={18}
               />
               <ChevronDown className="text-gray-400" />
             </div>

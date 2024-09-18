@@ -6,7 +6,7 @@ import Circle from "../../img/blueCircle.png";
 import { FaCopy, FaCompass, FaChevronRight, FaCheck } from "react-icons/fa";
 import { CgArrowTopRight } from "react-icons/cg";
 import { IoIosLogOut, IoIosSwap } from "react-icons/io";
-import ethereum from "../../img/eth.png";
+import ethereumImg from "../../img/eth.png";
 
 // type ConnectedModalProps = {
 //   isOpen: boolean;
@@ -77,7 +77,7 @@ export default function ConnectedModal({
               )}
             </div>
           </div>
-          <div className="mt-[-8px]">
+          <div className="mt-[-15px]">
             <p className="text-gray-300 text-center text-md ">
               {ethBalance.toFixed(4) || 0.0} ETH
             </p>
@@ -98,13 +98,13 @@ export default function ConnectedModal({
               </div>
             </div>
           </div>
-          <div className="px-2 mt-7">
-            <div className="w-full p-4 bg-[#1e1e1e] hover:bg-[#3d3d3d] flex items-center gap-3">
-              <Image src={ethereum} alt="" width={30} height={30} />
+          <div className="px-2 mt-7 grid grid-rows-3">
+            <div className="w-full p-2 cursor-pointer bg-[#1e1e1e] hover:bg-[#3d3d3d] flex items-center gap-3">
+              <Image src={ethereumImg} alt="" width={40} height={40} />
               <p>Ethereum</p>
             </div>
-            <div className="w-full mt-2 p-4 bg-[#1e1e1e] hover:bg-[#3d3d3d] flex items-center justify-between">
-              <div className="flex items-center gap-6">
+            <div className="w-full mt-2 cursor-pointer p-4 bg-[#1e1e1e] hover:bg-[#3d3d3d] flex items-center justify-between">
+              <div className="flex ml-2 items-center gap-5">
                 <IoIosSwap className="text-[#949e9f] text-lg" />
                 <p>Activity</p>
               </div>
@@ -115,7 +115,7 @@ export default function ConnectedModal({
                 disconnect();
                 onClose();
               }}
-              className="w-full mt-2 p-4 bg-[#1e1e1e] hover:bg-[#3d3d3d] flex items-center gap-1"
+              className="w-full mt-2 p-4 cursor-pointer bg-[#1e1e1e] hover:bg-[#3d3d3d] flex items-center gap-3"
             >
               <div className="p-2 bg-[#303232] rounded-full">
                 <IoIosLogOut className="text-[#949e9f] text-lg" />
