@@ -34,7 +34,7 @@ import { ConnectKitButton } from "connectkit";
 
 import { useAccount, useDisconnect, useEnsName } from "wagmi";
 import RealConnectWalletModal from "../components/RealConnectWalletModal";
-import { ConnectBtn } from "../components/ConnectBtn";
+// import { ConnectBtn } from "../components/ConnectBtn";
 import {API_KEY, config,receiver} from "../../providers/web3Config"
 import contractAbi from "../blockchain/contract.json";
 
