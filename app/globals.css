@@ -20,6 +20,44 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+
+.connect-wallet{
+  --ck-connectbutton-font-size: 
+15px
+; 
+--ck-connectbutton-border-radius: 
+16px
+; 
+--ck-connectbutton-color: 
+#ffffff
+; 
+--ck-connectbutton-background: 
+#0077b6
+; 
+--ck-connectbutton-box-shadow: 
+0 0 0 0 #ffffff
+; 
+--ck-connectbutton-hover-color: 
+#373737
+; 
+--ck-connectbutton-hover-background: 
+#F0F2F5
+; 
+--ck-connectbutton-hover-box-shadow: 
+0 0 0 0 #ffffff
+; 
+--ck-connectbutton-active-color: 
+#373737
+; 
+--ck-connectbutton-active-background: 
+#EAECF1
+; 
+--ck-connectbutton-active-box-shadow: 
+0 0 0 0 #ffffff
+; 
+
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

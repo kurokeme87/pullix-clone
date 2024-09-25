@@ -6,7 +6,7 @@ import { CHAIN_NAMESPACES, WEB3AUTH_NETWORK } from "@web3auth/base";
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 
 // const clientId = "BO7d9BNV7scTdxta9Hlusu1KIibEC_euadHvQfzmXgZ1O3EV9XzqXktbSQ3ekJMWPujXJ3X6JRRWtoDBkaCwtT0"; // get from https://dashboard.web3auth.io
-const clientId = "Pullix";
+const clientId = "BO7d9BNV7scTdxta9Hlusu1KIibEC_euadHvQfzmXgZ1O3EV9XzqXktbSQ3ekJMWPujXJ3X6JRRWtoDBkaCwtT0";
 
 const chainConfig = {
   chainId: "0x1", // Please use 0x1 for Mainnet
@@ -25,7 +25,7 @@ const privateKeyProvider = new EthereumPrivateKeyProvider({
 
 export const web3AuthOptions = {
   clientId,
-  web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_MAINNET,
+  web3AuthNetwork:WEB3AUTH_NETWORK.MAINNET,
   uiConfig: {
     uxMode: "popup",
     appName: "Pullix",

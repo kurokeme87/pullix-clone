@@ -6,7 +6,7 @@ import "./globals.css";
 // import { config } from "../config";
 // import { chains, providers } from "@web3modal/ethereum";
 // import { QueryClient } from "@tanstack/react-query";
-import { WagmiContextProvider } from "../providers/wagmi";
+import { Web3Provider } from "../providers/wagmi";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -48,7 +48,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <WagmiContextProvider>{children}</WagmiContextProvider>
+        <Web3Provider>{children}</Web3Provider>
       </body>
     </html>
   );
