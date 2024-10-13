@@ -21,8 +21,9 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "Pullix",
-  description: "Pullix is an innovative staking platform equipped with advanced trading tools. Leveraging state-of-the-art technology and blockchain",
-keywords : "pullix , pullix staking , pullix crypto",
+  description:
+    "Pullix is an innovative staking platform equipped with advanced trading tools. Leveraging state-of-the-art technology and blockchain",
+  keywords: "pullix , pullix staking , pullix crypto",
 };
 
 // const modalConfig = {
